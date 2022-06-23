@@ -1,3 +1,3 @@
-# Hollow_Knight_1._5_Mod1
+#Lord of Flies
 
-A mod for the game Hollow Knight.
+Increases the difficulty of Sly with various changes

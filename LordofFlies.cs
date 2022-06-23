@@ -1,9 +1,4 @@
-using System;
-using Modding;
-using JetBrains.Annotations;
-using UnityEngine.SceneManagement;
-using USceneManager = UnityEngine.SceneManagement.SceneManager;
-using UObject = UnityEngine.Object;
+
 
 namespace Lord_of_Flies
 {
@@ -78,9 +73,9 @@ namespace Lord_of_Flies
             {
                 case "Sly_Name":
                 case "Sly_MAIN" when _lastScene == "GG_Workshop" && PlayerData.instance.statueStateHollowKnight.usingAltVersion:
-                    return "Sly";
+                    return "Lord of Flies";
                 case "Sly_Desc":
-                    return "Suffer.";
+                    return "Prepare to die";
                 default:
                     return orig;
             }
@@ -106,7 +101,7 @@ namespace Lord_of_Flies
 
         private static void AddComponent()
         {
-            GameManager.instance.gameObject.AddComponent<SlyFinder>();
+            GameManager.instance.gameObject.AddComponent<LordFinder>();
         }
 
         public void Unload()
@@ -119,7 +114,7 @@ namespace Lord_of_Flies
             ModHooks.SetPlayerVariableHook -= SetVariableHook;
             USceneManager.activeSceneChanged -= SceneChanged;
 
-            var finder = GameManager.instance.gameObject.GetComponent<SlyFinder>();
+            var finder = GameManager.instance.gameObject.GetComponent<LordFinder>();
 
             if (finder != null)
                 UObject.Destroy(finder);

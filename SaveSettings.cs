@@ -1,4 +1,3 @@
-using System;
 
 namespace Lord_of_Flies
 {

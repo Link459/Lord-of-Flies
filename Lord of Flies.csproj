@@ -8,11 +8,11 @@
     <!--<DocumentationFile>$(OutputPath)/$(AssemblyTitle).xml</DocumentationFile>-->
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Hollow_Knight_1._5_Mod1</RootNamespace>
-    <AssemblyName>Hollow_Knight_1._5_Mod1</AssemblyName>
+    <RootNamespace>Lord of Flies</RootNamespace>
+    <AssemblyName>Lord of Flies</AssemblyName>
     <TargetFramework>net472</TargetFramework>
-    <AssemblyTitle>Hollow_Knight_1._5_Mod1</AssemblyTitle>
-    <Product>Hollow_Knight_1._5_Mod1</Product>
+    <AssemblyTitle>Lord of Flies</AssemblyTitle>
+    <Product>Lord of Flies</Product>
     <Description>A Hollow Knight Mod</Description>
     <Copyright>Copyright ©  2022</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
