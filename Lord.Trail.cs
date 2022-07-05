@@ -4,7 +4,7 @@ namespace Lord_of_Flies
 {
         public class Trail
         {
-        /* Taken and modified from https://github.com/5FiftySix6/HollowKnight.Pale-Prince/blob/master/Pale%20Prince/Prince.cs */
+        /* forked and modified from https://github.com/5FiftySix6/HollowKnight.Pale-Prince/blob/master/Pale%20Prince/Prince.cs */
         public static ParticleSystem AddTrail(GameObject go,
                                                   float startSize,
                                                   float lifetime,
