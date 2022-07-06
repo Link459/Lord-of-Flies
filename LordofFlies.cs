@@ -1,5 +1,7 @@
 
 
+
+
 namespace Lord_of_Flies
 {
     [UsedImplicitly]
@@ -18,13 +20,12 @@ namespace Lord_of_Flies
         private string _lastScene;
 
         public LordofFlies() : base("Lord of Flies") {}
-
-        public override void Initialize()
+        public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
             Instance = this;
-            
+
             Unload();
-            
+
             ModHooks.BeforeSavegameSaveHook += BeforeSaveGameSave;
             ModHooks.AfterSavegameLoadHook += SaveGame;
             ModHooks.SavegameSaveHook += SaveGameSave;
@@ -32,7 +33,9 @@ namespace Lord_of_Flies
             ModHooks.LanguageGetHook += OnLangGet;
             ModHooks.SetPlayerVariableHook += SetVariableHook;
             ModHooks.GetPlayerVariableHook += GetVariableHook;
+            ModHooks.AfterTakeDamageHook += AddHealth;
             USceneManager.activeSceneChanged += SceneChanged;
+            
         }
 
 
@@ -72,7 +75,7 @@ namespace Lord_of_Flies
             switch (key)
             {
                 case "Sly_Name":
-                case "Sly_MAIN" when _lastScene == "GG_Workshop" && PlayerData.instance.statueStateHollowKnight.usingAltVersion:
+                case "Sly_MAIN" when _lastScene == "GG_Workshop" && PlayerData.instance.statueStateSly.usingAltVersion:
                     return "Lord of Flies";
                 case "Sly_Desc":
                     return "Prepare to die";
@@ -83,9 +86,9 @@ namespace Lord_of_Flies
 
         private void BeforeSaveGameSave(SaveGameData data)
         {
-            _settings.AltStatue = PlayerData.instance.statueStateHollowKnight.usingAltVersion;
+            _settings.AltStatue = PlayerData.instance.statueStateSly.usingAltVersion;
             
-            PlayerData.instance.statueStateHollowKnight.usingAltVersion = false;
+            PlayerData.instance.statueStateSly.usingAltVersion = false;
         }
 
         private void SaveGame(SaveGameData data)
@@ -96,12 +99,18 @@ namespace Lord_of_Flies
         
         private void SaveGameSave(int id = 0)
         {
-            PlayerData.instance.statueStateHollowKnight.usingAltVersion = _settings.AltStatue;
+            PlayerData.instance.statueStateSly.usingAltVersion = _settings.AltStatue;
         }
 
         private static void AddComponent()
         {
             GameManager.instance.gameObject.AddComponent<LordFinder>();
+        }
+
+        private int AddHealth(int hazardType , int damageAmount)
+        {
+            GameObject.Find("Sly Boss").GetComponent<HealthManager>().hp += 100;
+            return damageAmount;
         }
 
         public void Unload()

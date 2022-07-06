@@ -1,6 +1,3 @@
-
-
-
 namespace Lord_of_Flies
 {
     internal class LordFinder : MonoBehaviour
@@ -88,10 +85,8 @@ namespace Lord_of_Flies
             GameObject go = GameObject.Find("Sly Boss");
             go.AddComponent<Lord>();
             go.GetComponent<tk2dSprite>().color = Color.cyan;
-            go.AddComponent<Healer>();
-
         }
-
+       
         static void Log(object o)
         {
             Log($"[{Assembly.GetExecutingAssembly().GetName().Name}]: " + o);

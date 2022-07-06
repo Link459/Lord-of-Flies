@@ -12,6 +12,7 @@ global using Logger = Modding.Logger;
 global using System;
 global using GlobalEnums;
 global using System.Linq;
+global using System.Collections.Generic;
 
 
 
