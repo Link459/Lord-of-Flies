@@ -1,14 +1,13 @@
-
-namespace Lord_of_Flies
+namespace Lord_of_Flies 
 {
-    [Serializable]
-    public class SaveSettings
-    {
-        public BossStatue.Completion Completion = new()
-        {
-            isUnlocked = true
-        };
+  public sealed partial class LordGlobalSettings: IGlobalSettings<GlobalSettings>
+{
+	public static GlobalSettings GlobalSettings { get; private set; } = new();
+	public void OnLoadGlobal(GlobalSettings s) => GlobalSettings = s;
+	public GlobalSettings OnSaveGlobal() => GlobalSettings;
+}
 
-        public bool AltStatue;
-    }
+public sealed class GlobalSettings {
+	public static bool modifyPantheons = false;
+}
 }
