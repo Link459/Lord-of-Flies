@@ -5,10 +5,8 @@ namespace Lord_of_Flies
 	bool IMenuMod.ToggleButtonInsideMenu => true;
     public List<IMenuMod.MenuEntry> GetMenuData(IMenuMod.MenuEntry? toggleButtonEntry)
     {
-		
         return new List<IMenuMod.MenuEntry>
         {
-			
             new IMenuMod.MenuEntry {
                 Name = "Modify Pantheons",
                 // Nothing will be displayed

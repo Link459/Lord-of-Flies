@@ -1,41 +1,60 @@
+using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
+
 namespace Lord_of_Flies 
 {
-	public class Lord_of_Flies : Mod
+	public class LordOfFlies : Mod
 	{
 		new public string GetName() => "Lord of Flies";
         public override string GetVersion() => "1.0.0.0";
-         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects) 
-        {
-               var Shot = preloadedObjects["sharedassets449"]["Shot HK Shadow(Clone)"];
-            ModHooks.AfterSavegameLoadHook += this.SaveGame;
-            ModHooks.NewGameHook += AddComponent;
-            ModHooks.AfterTakeDamageHook += AddHealth;
-            ModHooks.LanguageGetHook += OnLangGet;
-        }
+         public override void Initialize()
+         {
+               ModHooks.AfterSavegameLoadHook += this.SaveGame;
+               ModHooks.NewGameHook += AddComponent;
+               ModHooks.AfterTakeDamageHook += AddHealth;
+               ModHooks.LanguageGetHook += OnLangGet; 
+         }
 
-        /*public override List<(string, string)> GetPreloadNames()
-    {
-       return new List<(string, string)>
-       {
-        ("sharedassets447","Shot HK Shadow(Clone)")
-       };
-    }*/
-     public static GameObject AncientSword { get; set; }
-     //public static void Preloaded(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects){
-       // AncientSword = UnityEngine.Object.Instantiate(preloadedObjects["sharedassets447"]["Shot HK Shadow(Clone)"]);
-     //}
+         public Dictionary<string, Dictionary<string, GameObject>> assetsByScene = new()
+         {
+            ["GG_HK_Prime"] = new()
+            {
+                ["ancientswordname"] = null,
+            },
+         };
 
-        //occurs in case we aren't starting a new game.
+         private Func<IEnumerator> SaveAssetsFromScene(string scenename)
+         {
+             IEnumerator SaveAssets()
+             {
+                 Dictionary<string, GameObject> assets = assetsByScene[scenename];
+                 foreach (GameObject go in Resources.FindObjectsOfTypeAll<GameObject>())
+                 {
+                     if (assets.ContainsKey(go.name = ""))
+                     {
+                         Lord lord = new Lord();
+                         lord.AncientSword = GameObject.Instantiate(go);
+                         GameObject.DontDestroyOnLoad(lord.AncientSword);
+                         lord.AncientSword.SetActive(true);
+                         assets[lord.AncientSword.name] = lord.AncientSword;
+                     }
+                 }
+                 yield break;
+             }
+
+             return SaveAssets;
+         }
         private void SaveGame(SaveGameData data){AddComponent();}
         private void AddComponent(){GameManager.instance.gameObject.AddComponent<LordFinder>();}
-        private int AddHealth(int hazardType, int damageAmount){
+        private int AddHealth(int hazardType, int damageAmount)
+        {
             if(GameManager.instance.sceneName == "GG_Sly")
             {
                  GameObject.Find("Sly Boss").GetComponent<HealthManager>().hp += 100;
                  return damageAmount*2;}
             else
-            {return damageAmount;}
-            }
+            {return damageAmount;} 
+        }
         private string OnLangGet(string key, string sheettitle, string orig)
         {
             switch (key)

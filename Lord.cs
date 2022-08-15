@@ -6,23 +6,39 @@ namespace Lord_of_Flies
         private tk2dSpriteAnimator _anim;
         private PlayMakerFSM _control;
         private PlayMakerFSM _stuns;
+        private Rigidbody2D _rb;
+        public GameObject AncientSword;
         private ParticleSystem _trail;
 
-        
         public void Awake()
         {
             _hm = gameObject.GetComponent<HealthManager>();
             _control = gameObject.LocateMyFSM("Control");
             _stuns = gameObject.LocateMyFSM("Stun Control");
             _anim = gameObject.GetComponent<tk2dSpriteAnimator>();
+            _rb = GetComponent<Rigidbody2D>();
+
         }
         public IEnumerator Start()  
         {
-            
-         _trail = Trail.AddTrail(gameObject, 3, 0.8f, 1.5f, 1, 1.8f, Color.green);
-         _hm.hp = 3000;
+            _trail = Trail.AddTrail(gameObject, 3, 0.8f, 1.5f, 1, 1.8f, Color.red);
+            _hm.hp = 3000;
 
-           Action ProjectileSpawner(Func<GameObject> proj, float speed)
+            Action trajector(Func<GameObject> proj,float speed,float height,float time)
+            {
+                return () =>
+                {
+                    (float x, float y, float z) = transform.position;
+                    float vx = speed * Math.Sign(transform.localScale.x);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Instantiate(proj?.Invoke(), new Vector3(x,y,z),Quaternion.Euler(Vector3.zero))
+                            .GetComponent<Rigidbody2D>().velocity = new Vector2(vx,y);
+                        proj.Invoke().transform.position = new Vector3(x,Mathf.Lerp(0f, height + i, time + i),z);
+                    }
+                };
+            }
+            Action ProjectileSpawner(Func<GameObject> proj, float speed)
             {
                 return () =>
                 {
@@ -37,8 +53,8 @@ namespace Lord_of_Flies
                             .velocity = new Vector2(vx, 0);
                     }
                 };
-            }
-            //Modifing animation speeds
+             }
+           
             _anim.Library.GetClipByName("Antic").fps = 20;
             _anim.Library.GetClipByName("Attack1 S1").fps = 20;
             _anim.Library.GetClipByName("Attack1 S2").fps = 20;
@@ -62,73 +78,61 @@ namespace Lord_of_Flies
 
             _control.GetAction<FloatMultiply>("Slash Recover").multiplyBy = 5 / 6f;
             
-            //modifing stuns
             _stuns.FsmVariables.GetFsmInt("Stun Combo").Value = 22;
             _stuns.FsmVariables.GetFsmInt("Stun Hit Max").Value = 28;
-           //setting the modified attck points
-           _control.GetState("").InsertCoroutine(4, (Func<IEnumerator>)SpinSlashLaunch,false);
-
-           _control.GetState("Attack1 S1").InsertMethod(0, ProjectileSpawner(() => A(index), 30f));
-           _control.GetState("Attack1 S2").InsertMethod(0, ProjectileSpawner(() => AncientSword(index), 30f));
-           _control.GetState("Attack1 S3").InsertMethod(0, ProjectileSpawner(() => AncientSword(index), 30f));
-           _control.GetState("Attack2 S1").InsertMethod(0, ProjectileSpawner(() => AncientSword(index), 30f));
-           _control.GetState("Attack2 S2").InsertMethod(0, ProjectileSpawner(() => AncientSword(index), 30f));
-           _control.GetState("Attack2 S3").InsertMethod(0, ProjectileSpawner(() => AncientSword(index), 30f));
-           _control.GetState("Attack2 S4").InsertMethod(0, ProjectileSpawner(() => , 30f));
-   
-           //creating and setting the the Sword Spawn attck
-           _control.CreateState("Sword Spawn");
-           FsmState swordSpawn = _control.GetState("Sword Spawn");
-          /* _control.GetState("").AddAction("Fireball Pos", new GetDistance()
-           {
-           gameObject = new FsmOwnerDefault()
-           {
-           OwnerOption = OwnerDefaultOption.SpecifyGameObject,
-           GameObject = _control.gameObject
-           },
-           target = new FsmGameObject()
-           {
-            Value = HeroController.instance.gameObject
-           },
-           storeResult = ("Distance"),
-           everyFrame = true
-           });*/
-           swordSpawn.AddTransition("Jump","Sword Spawn");
-           
-           swordSpawn.AddCoroutine(SwordSpawn);
-
+            
+            _control.GetState("Attack1 S1").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
+            _control.GetState("Attack1 S2").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
+            _control.GetState("Attack1 S3").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
+            _control.GetState("Attack2 S1").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
+            _control.GetState("Attack2 S2").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
+            _control.GetState("Attack2 S3").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
+            _control.GetState("Attack2 S4").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
+            
+            _control.GetState("Attack1 S1").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
+            _control.GetState("Attack1 S2").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
+            _control.GetState("Attack1 S3").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
+            _control.GetState("Attack2 S1").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
+            _control.GetState("Attack2 S2").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
+            _control.GetState("Attack2 S3").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
+            _control.GetState("Attack2 S4").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
+            
+            _control.GetState("Spin Slash").InsertCoroutine(4,SpinSlashLaunch);
+            _control.GetState("").InsertCoroutine(0,SwordSlash);
+            
+            _control.CreateState("Sword Spawn");
+            FsmState swordSpawn = _control.GetState("Sword Spawn");
+            swordSpawn.AddTransition("Jump","Sword Spawn");
+            swordSpawn.AddCoroutine(SwordSpawn);
             yield break;
         }
-
-
-         //creating the new attacks
-         IEnumerator SpinSlashLaunch()
+        private IEnumerator SpinSlashLaunch()
         {
-            //spawns a random sword and makes it shoot at the player
-            for(int i = 0; i < 5;i++)
+            for(int i = 0; i < 20;i++)
             {
-                Instantiate(AncientSword1);
-                AncientSword1.transform.position = HeroController.instance.transform.position;
-                yield return new WaitForSeconds(0.2f);
+                var direction = new Vector3(Mathf.Cos(Time.time), Mathf.Sin(Time.time),0);
+                AncientSword.transform.position = direction;
+                yield return new WaitForSeconds(0.05f);
             }
-            yield break;
         }
-
-        IEnumerator SwordSpawn()
+        private IEnumerator SwordSpawn()
         {
-            //spawns the swords in a half circle behind sly
             float angle = 0;
             for (int i = 0;i < 1;i++)
             {
-            var direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle),0);
-            var go = Instantiate(AncientSword[index],transform.position,Quaternion.identity);// spawn your gameobject at the center
-            go.transform.position += 5 * direction; // spawn them 5 units away from the center
-            angle += Mathf.PI / 5; // for 10 objects in the half circle
+                angle += Mathf.PI / 5;
+                var direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle),0);
+                var go = Instantiate(AncientSword,transform.position,Quaternion.identity);
+                go.transform.position += 5 * direction;
             }
             yield return new WaitForSeconds(0.5f);
-            gameObject.transform.position = HeroController.instance.transform.position;
-            yield break;
-    
+            AncientSword.transform.position = HeroController.instance.transform.position;
         }
+        private IEnumerator SwordSlash()
+        {
+            AncientSword.transform.position = new Vector2(transform.position.x, 2 * Time.deltaTime * 2);
+            yield return new WaitForSeconds(0.5f);
+            AncientSword.transform.position = HeroController.instance.transform.position * Time.deltaTime * 2;
+        } 
     }
 }
