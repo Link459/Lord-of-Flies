@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
-
 namespace Lord_of_Flies 
 {
 	public class LordOfFlies : Mod
@@ -30,10 +27,10 @@ namespace Lord_of_Flies
                  Dictionary<string, GameObject> assets = assetsByScene[scenename];
                  foreach (GameObject go in Resources.FindObjectsOfTypeAll<GameObject>())
                  {
-                     if (assets.ContainsKey(go.name = ""))
+                     if (assets.ContainsKey(go.name = "Shot Hk Shadow"))
                      {
                          Lord lord = new Lord();
-                         lord.AncientSword = GameObject.Instantiate(go);
+                         lord.AncientSword = go;
                          GameObject.DontDestroyOnLoad(lord.AncientSword);
                          lord.AncientSword.SetActive(true);
                          assets[lord.AncientSword.name] = lord.AncientSword;
