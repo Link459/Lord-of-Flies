@@ -1,22 +1,25 @@
 namespace Lord_of_Flies 
 {
 	public class LordOfFlies : Mod
-	{
+    {
+        public static LordOfFlies instance;
 		new public string GetName() => "Lord of Flies";
         public override string GetVersion() => "1.0.0.0";
-         public override void Initialize()
-         {
-               ModHooks.AfterSavegameLoadHook += this.SaveGame;
-               ModHooks.NewGameHook += AddComponent;
-               ModHooks.AfterTakeDamageHook += AddHealth;
-               ModHooks.LanguageGetHook += OnLangGet; 
-         }
 
-         public Dictionary<string, Dictionary<string, GameObject>> assetsByScene = new()
+        public override void Initialize()
+        {
+            ModHooks.AfterSavegameLoadHook += this.SaveGame;
+            ModHooks.NewGameHook += AddComponent;
+            ModHooks.AfterTakeDamageHook += AddHealth;
+            ModHooks.LanguageGetHook += OnLangGet;
+            instance = this;
+        }
+
+        public Dictionary<string, Dictionary<string, GameObject>> assetsByScene = new()
          {
-            ["GG_HK_Prime"] = new()
+            ["GG_Hollow_Knight"] = new()
             {
-                ["ancientswordname"] = null,
+                ["Shot HK Shadow"] = null,
             },
          };
 
@@ -27,18 +30,18 @@ namespace Lord_of_Flies
                  Dictionary<string, GameObject> assets = assetsByScene[scenename];
                  foreach (GameObject go in Resources.FindObjectsOfTypeAll<GameObject>())
                  {
-                     if (assets.ContainsKey(go.name = "Shot Hk Shadow"))
+                     if (assets.ContainsKey(go.name))
                      {
                          Lord lord = new Lord();
                          lord.AncientSword = go;
                          GameObject.DontDestroyOnLoad(lord.AncientSword);
-                         lord.AncientSword.SetActive(true);
+                         lord.AncientSword.SetActive(false);
+                         lord.AncientSword.name = go.name;
                          assets[lord.AncientSword.name] = lord.AncientSword;
                      }
                  }
                  yield break;
              }
-
              return SaveAssets;
          }
         private void SaveGame(SaveGameData data){AddComponent();}
@@ -54,19 +57,14 @@ namespace Lord_of_Flies
         }
         private string OnLangGet(string key, string sheettitle, string orig)
         {
-            switch (key)
+            return key switch
             {
-                case "NAME_SLY":
-                    return "Lord of Flies";
-                case "GG_S_SLY":
-                    return "Prepare to die";
-                case "SLY_BOSS_MAIN":
-                    return "Flies";
-                case "SLY_BOSS_SUPER":
-                    return "Lord of";
-                default:
-                    return orig;
-            }
+                "NAME_SLY" => "Lord of Flies",
+                "GG_S_SLY" => "Prepare to die",
+                "SLY_BOSS_MAIN" => "Flies",
+                "SLY_BOSS_SUPER" => "Lord of",
+                _ => orig
+            };
         }
 	}
 }

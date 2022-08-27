@@ -21,6 +21,10 @@ namespace Lord_of_Flies
         }
         public IEnumerator Start()  
         {
+            if (AncientSword == null)
+            {
+                Modding.Logger.Log("its not working :zote:");
+            }
             _trail = Trail.AddTrail(gameObject, 3, 0.8f, 1.5f, 1, 1.8f, Color.red);
             _hm.hp = 3000;
 
@@ -38,7 +42,8 @@ namespace Lord_of_Flies
                     }
                 };
             }
-           //taken from https://github.com/Link459/HollowKnight.Pale-Prince/blob/master/Pale%20Prince/Prince.cs#L206-L222
+
+            //taken from https://github.com/Link459/HollowKnight.Pale-Prince/blob/master/Pale%20Prince/Prince.cs#L206-L222
             #region takenFrom56
             Action ProjectileSpawner(Func<GameObject> proj, float speed)
             {
@@ -57,7 +62,7 @@ namespace Lord_of_Flies
                 };
             }
             #endregion
-           
+
             _anim.Library.GetClipByName("Antic").fps = 20;
             _anim.Library.GetClipByName("Attack1 S1").fps = 20;
             _anim.Library.GetClipByName("Attack1 S2").fps = 20;
@@ -92,6 +97,11 @@ namespace Lord_of_Flies
             _control.GetState("Attack2 S3").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
             _control.GetState("Attack2 S4").InsertMethod(0, ProjectileSpawner(() => AncientSword, 30f));
             
+            if (AncientSword == null)
+            {
+                Modding.Logger.Log("shit going wrong");
+            }
+            
             _control.GetState("Attack1 S1").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
             _control.GetState("Attack1 S2").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
             _control.GetState("Attack1 S3").InsertMethod(0, trajector(() => AncientSword, 30f,5f,2f));
@@ -113,8 +123,13 @@ namespace Lord_of_Flies
         {
             for(int i = 0; i < 20;i++)
             {
+                var go = GameObject.Instantiate(AncientSword,transform.position,Quaternion.identity);
                 var direction = new Vector3(Mathf.Cos(Time.time), Mathf.Sin(Time.time),0);
-                AncientSword.transform.position = direction;
+                go.transform.position = direction;
+                if (AncientSword == null)
+                {
+                    Modding.Logger.Log("shit going wrong");
+                }
                 yield return new WaitForSeconds(0.05f);
             }
         }
@@ -125,8 +140,12 @@ namespace Lord_of_Flies
             {
                 angle += Mathf.PI / 5;
                 var direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle),0);
-                var go = Instantiate(AncientSword,transform.position,Quaternion.identity);
+                var go = GameObject.Instantiate(AncientSword,transform.position,Quaternion.identity);
                 go.transform.position += 5 * direction;
+                if (AncientSword == null)
+                {
+                    Modding.Logger.Log("shit going wrong");
+                }
             }
             yield return new WaitForSeconds(0.5f);
             AncientSword.transform.position = HeroController.instance.transform.position;
@@ -136,6 +155,6 @@ namespace Lord_of_Flies
             AncientSword.transform.position = new Vector2(transform.position.x, 2 * Time.deltaTime * 2);
             yield return new WaitForSeconds(0.5f);
             AncientSword.transform.position = HeroController.instance.transform.position * Time.deltaTime * 2;
-        } 
+        }
     }
 }
