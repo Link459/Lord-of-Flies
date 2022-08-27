@@ -38,6 +38,8 @@ namespace Lord_of_Flies
                     }
                 };
             }
+           //taken from https://github.com/Link459/HollowKnight.Pale-Prince/blob/master/Pale%20Prince/Prince.cs#L206-L222
+            #region takenFrom56
             Action ProjectileSpawner(Func<GameObject> proj, float speed)
             {
                 return () =>
@@ -53,7 +55,8 @@ namespace Lord_of_Flies
                             .velocity = new Vector2(vx, 0);
                     }
                 };
-             }
+            }
+            #endregion
            
             _anim.Library.GetClipByName("Antic").fps = 20;
             _anim.Library.GetClipByName("Attack1 S1").fps = 20;
